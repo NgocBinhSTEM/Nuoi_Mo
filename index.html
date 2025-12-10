@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nuôi Mỡ</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #ffeaf5 0, #ffc8e8 40%, #ff9ac4 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      color: #332222;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      margin: 16px;
+      background: #fff7fc;
+      border-radius: 24px;
+      box-shadow: 0 18px 40px rgba(180, 60, 110, 0.35);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-inner {
+      padding: 16px 16px 24px;
+      overflow-y: auto;
+      max-height: calc(100vh - 32px);
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #ff9ac4, #ffd1e8);
+      border-radius: 20px;
+      padding: 18px 16px 22px;
+      text-align: center;
+      color: #fff;
+      position: relative;
+      box-shadow: 0 10px 24px rgba(190, 60, 120, 0.4);
+    }
+
+    /* Cartoon logo */
+    .logo {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      background: #ffe6f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #ff5f9e;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo span {
+      font-size: 30px;
+      z-index: 2;
+    }
+
+    .logo::before,
+    .logo::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffb3c6 0, #ff9ec4 60%, transparent 100%);
+      top: 54px;
+    }
+
+    .logo::before { left: 18px; }
+    .logo::after { right: 18px; }
+
+    .logo-hair {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      width: 40px;
+      height: 24px;
+      border: 3px solid #ff8ab3;
+      border-color: #ff8ab3 transparent transparent transparent;
+      border-radius: 40px 40px 0 0;
+      transform: translateX(-50%);
+    }
+
+    .title-main {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.25);
+      padding: 8px 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-top: 4px;
+      backdrop-filter: blur(6px);
+    }
+
+    .lang-switch {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .lang-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.7);
+      color: #b02060;
+      transition: all 0.15s ease;
+    }
+
+    .lang-btn.active {
+      background: #b02060;
+      color: #fff;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.65);
+    }
+
+    .section-title {
+      margin: 20px 4px 10px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #c2185b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title span.emoji {
+      font-size: 18px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 14px 14px 16px;
+      margin: 8px 0;
+      box-shadow: 0 10px 18px rgba(210, 95, 145, 0.12);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .card-icon {
+      font-size: 22px;
+    }
+
+    .card-title {
+      font-weight: 800;
+      font-size: 16px;
+      color: #7b1fa2;
+    }
+
+    .card-text {
+      margin-top: 4px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #444;
+    }
+
+    .list {
+      list-style: none;
+      margin-top: 6px;
+    }
+
+    .list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 4px 0;
+      font-size: 14px;
+    }
+
+    .list li .bullet {
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .comparison-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    @media (min-width: 480px) {
+      .comparison-row {
+        flex-direction: row;
+      }
+    }
+
+    .card.bad { border-left: 4px solid #ff4b5c; }
+    .card.good { border-left: 4px solid #ff8fb1; }
+
+    .card.bad .card-title { color: #d6001c; }
+    .card.good .card-title { color: #d81b60; }
+
+    .donate-card {
+      background: linear-gradient(135deg, #ffe3f2, #ffd2b8);
+      border-radius: 20px;
+      margin: 18px 0 6px;
+      padding: 16px 14px 18px;
+      text-align: center;
+      box-shadow: 0 12px 24px rgba(204, 120, 140, 0.35);
+    }
+
+    .donate-title {
+      font-weight: 900;
+      font-size: 17px;
+      margin-bottom: 8px;
+      color: #b1495f;
+    }
+
+    .donate-text { font-size: 14px; margin-bottom: 12px; }
+
+    .btn-donate {
+      border: none;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff4081, #ff9800);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(183, 81, 100, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .btn-donate:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 5px 10px rgba(183, 81, 100, 0.4);
+    }
+
+    footer {
+      margin-top: 8px;
+      text-align: center;
+      font-size: 11px;
+      color: #b03d64;
+      opacity: 0.85;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    .overlay.active {
+      display: flex;
+      pointer-events: auto;
+    }
+
+    .overlay-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, #ffffff 0, #ffe082 20%, #ff8a65 45%, #ff5252 65%, #6a1b9a 100%);
+      opacity: 0.95;
+      animation: bgPulse 3s linear infinite alternate;
+    }
+
+    @keyframes bgPulse {
+      0%   { filter: hue-rotate(0deg) saturate(1); }
+      50%  { filter: hue-rotate(60deg) saturate(1.3); }
+      100% { filter: hue-rotate(120deg) saturate(1.6); }
+    }
+
+    .overlay-content {
+      position: relative;
+      max-width: 360px;
+      margin: 0 16px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 26px;
+      padding: 22px 18px 18px;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+    }
+
+    .overlay-title {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ff4081, #e91e63, #9c27b0);
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: titleGlow 1.4s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      0%   { text-shadow: 0 0 6px rgba(255, 64, 129, 0.8); }
+      100% { text-shadow: 0 0 14px rgba(156, 39, 176, 1); }
+    }
+
+    .overlay-message {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      color: #333;
+    }
+
+    /* QR area */
+    .overlay-qr {
+      margin-bottom: 14px;
+    }
+
+    .overlay-qr-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #c2185b;
+      margin-bottom: 6px;
+    }
+
+    .overlay-qr-box {
+      display: flex;
+      justify-content: center;
+    }
+
+    .overlay-qr-box img {
+      max-width: 180px;
+      width: 70%;
+      border-radius: 16px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .overlay-close {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #ff8fb1;
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(190, 80, 130, 0.45);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .overlay-close:active {
+      transform: translateY(1px) scale(0.97);
+      box-shadow: 0 4px 9px rgba(190, 80, 130, 0.4);
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 0, #ffeb3b 40%, transparent 70%);
+      opacity: 0.9;
+      animation: sparkle 1.2s linear infinite;
+      pointer-events: none;
+    }
+
+    .sparkle:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+    .sparkle:nth-child(2) { top: 18%; right: 18%; animation-delay: 0.2s; }
+    .sparkle:nth-child(3) { bottom: 18%; left: 16%; animation-delay: 0.4s; }
+    .sparkle:nth-child(4) { bottom: 10%; right: 22%; animation-delay: 0.6s; }
+    .sparkle:nth-child(5) { top: 50%; left: 4%; animation-delay: 0.8s; }
+    .sparkle:nth-child(6) { top: 45%; right: 6%; animation-delay: 1s; }
+
+    @keyframes sparkle {
+      0%   { transform: scale(0.4) translateY(0);    opacity: 0; }
+      40%  { transform: scale(1)   translateY(-6px); opacity: 1; }
+      100% { transform: scale(0.2) translateY(-14px);opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="app-inner">
+      <header class="header">
+        <div class="logo">
+          <div class="logo-hair"></div>
+          <span>Mỡ</span>
+        </div>
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="vi">VI</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <div class="title-main" id="title-main">NUÔI MỠ</div>
+        <div class="subtitle" id="subtitle">
+          Mẹ Mỡ hứa sao kê đầy đủ từng giọt sữa của cháu! 💯
+        </div>
+      </header>
+
+      <h2 class="section-title">
+        <span class="emoji">🎯</span>
+        <span id="why-title">Tại sao nên Nuôi Mỡ?</span>
+      </h2>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">📊</div>
+          <div class="card-title" id="realtime-title">Sao kê realtime</div>
+        </div>
+        <p class="card-text" id="realtime-text">
+          Mỗi cữ sữa, mỗi lần thay bỉm của Mỡ — mẹ cập nhật ngay tức thì!
+          Nhanh hơn cả tốc độ Mỡ kêu “E é” khi đói.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🔍</div>
+          <div class="card-title" id="transparent-title">Minh bạch 300%</div>
+        </div>
+        <p class="card-text" id="transparent-text">
+          Không chỉ 100%. Từ bịch khăn ướt 12k đến hộp sữa chua uống 9k của Mỡ,
+          mẹ đều báo cáo rõ ràng, đủ hình ảnh.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">📱</div>
+          <div class="card-title" id="app-track-title">App tracking</div>
+        </div>
+        <p class="card-text" id="app-track-text">
+          Theo dõi 24/7: Mỡ ngủ lúc nào, uống bao nhiêu ml, tè mấy lần.
+          Như một trợ lý “Big Mother” phiên bản hồng baby.
+        </p>
+      </div>
+
+      <h2 class="section-title">
+        <span class="emoji">🏆</span>
+        <span id="commit-title">Cam kết vàng của mẹ Mỡ</span>
+      </h2>
+
+      <div class="card">
+        <ul class="list">
+          <li>
+            <span class="bullet">✅</span>
+            <span id="commit-1">
+              Sao kê mỗi ngày: báo cáo lúc 6h sáng, không sót cữ nào
+              (kể cả cuối tuần & ngày lễ).
+            </span>
+          </li>
+          <li>
+            <span class="bullet">✅</span>
+            <span id="commit-2">
+              Không giấu giếm: miếng bánh ăn dở của Mỡ cũng ghi lại,
+              không để thất thoát “tài sản” của cháu.
+            </span>
+          </li>
+          <li>
+            <span class="bullet">✅</span>
+            <span id="commit-3">
+              Hóa đơn đầy đủ: ảnh bill sữa, phiếu siêu thị, mã vạch –
+              mẹ lưu trọn bộ để ai cần là có.
+            </span>
+          </li>
+          <li>
+            <span class="bullet">✅</span>
+            <span id="commit-4">
+              Video unboxing: mở từng gói bỉm mới tinh, quay lại cho mọi người giám sát độ “êm”.
+            </span>
+          </li>
+          <li>
+            <span class="bullet">✅</span>
+            <span id="commit-5">
+              Hotline 24/7: muốn hỏi hôm nay Mỡ ăn ngủ thế nào,
+              cứ inbox mẹ bất kỳ lúc nào.
+            </span>
+          </li>
+          <li>
+            <span class="bullet">✅</span>
+            <span id="commit-6">
+              Không block: hỏi kỹ mấy cũng trả lời, không có chuyện “đã xem” rồi im lặng.
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <h2 class="section-title">
+        <span class="emoji">💸</span>
+        <span id="compare-title">So sánh với “người khác”</span>
+      </h2>
+
+      <div class="comparison-row">
+        <div class="card bad">
+          <div class="card-title" id="other-title">Người khác</div>
+          <ul class="list">
+            <li>
+              <span class="bullet">❌</span>
+              <span id="other-1">
+                Sao kê sau 3 năm (hoặc… không bao giờ).
+              </span>
+            </li>
+            <li>
+              <span class="bullet">❌</span>
+              <span id="other-2">
+                Số liệu mập mờ như ảnh chụp bằng camera 0.3 MP.
+              </span>
+            </li>
+            <li>
+              <span class="bullet">❌</span>
+              <span id="other-3">
+                “Quên” bill, “lỡ” mất hóa đơn.
+              </span>
+            </li>
+            <li>
+              <span class="bullet">❌</span>
+              <span id="other-4">
+                Hỏi nhiều là block ngay.
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card good">
+          <div class="card-title" id="me-title">Mẹ Mỡ</div>
+          <ul class="list">
+            <li>
+              <span class="bullet">✅</span>
+              <span id="me-1">
+                Sao kê trước khi mua: ai tài trợ là được duyệt list trước.
+              </span>
+            </li>
+            <li>
+              <span class="bullet">✅</span>
+              <span id="me-2">
+                File chi tiêu rõ ràng, không làm tròn quá đà.
+              </span>
+            </li>
+            <li>
+              <span class="bullet">✅</span>
+              <span id="me-3">
+                Ghi chép chính xác đến từng ml sữa và từng cái bỉm của Mỡ.
+              </span>
+            </li>
+            <li>
+              <span class="bullet">✅</span>
+              <span id="me-4">
+                Trả lời tin nhắn còn nhanh hơn lúc Mỡ đòi bế.
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="donate-card">
+        <div class="donate-title" id="donate-title">
+          = DONATE NGAY, NẾU BẠN THẤY MỠ DỄ THƯƠNG! =
+        </div>
+        <p class="donate-text" id="donate-text">
+          Không cần nhiều đâu, chỉ cần bạn thương Mỡ là mẹ cháu vui rồi.
+        </p>
+        <button class="btn-donate" id="btn-donate">Donate</button>
+      </div>
+
+      <footer id="footer-text">
+        Made with 💗 – Dự án Nuôi Mỡ, mẹ cháu sao kê thật.
+      </footer>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay">
+    <div class="overlay-bg"></div>
+    <div class="overlay-content">
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+
+      <div class="overlay-title" id="overlay-title">
+        Cảm ơn bạn đã thương Mỡ! ✨
+      </div>
+      <div class="overlay-message" id="overlay-message">
+        Chân thành cảm ơn bạn, donate một nụ cười là được rồi.
+        Chúc bạn và gia đình luôn mạnh khỏe, hạnh phúc và thành công!
+      </div>
+
+      <!-- QR block -->
+      <div class="overlay-qr">
+        <div class="overlay-qr-title" id="overlay-qr-title">
+          Quét mã QR để ủng hộ Mỡ 💗
+        </div>
+        <div class="overlay-qr-box">
+          <!-- Đặt file qr_nuoimo.png cùng thư mục với index.html -->
+          <img src="qr_nuoimo.png" alt="QR donate Nuôi Mỡ" />
+        </div>
+      </div>
+
+      <button class="overlay-close" id="overlay-close">
+        Đóng / Close
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const translations = {
+      vi: {
+        "title-main": "NUÔI MỠ",
+        "subtitle": "Mẹ Mỡ hứa sao kê đầy đủ từng giọt sữa của cháu! 💯",
+        "why-title": "Tại sao nên Nuôi Mỡ?",
+        "realtime-title": "Sao kê realtime",
+        "realtime-text":
+          "Mỗi cữ sữa, mỗi lần thay bỉm của Mỡ — mẹ cập nhật ngay tức thì! Nhanh hơn cả tốc độ Mỡ kêu “E é” khi đói.",
+        "transparent-title": "Minh bạch 300%",
+        "transparent-text":
+          "Không chỉ 100%. Từ bịch khăn ướt 12k đến hộp sữa chua uống 9k của Mỡ, mẹ đều báo cáo rõ ràng, đủ hình ảnh.",
+        "app-track-title": "App tracking",
+        "app-track-text":
+          "Theo dõi 24/7: Mỡ ngủ lúc nào, uống bao nhiêu ml, tè mấy lần. Như một trợ lý “Big Mother” phiên bản hồng baby.",
+        "commit-title": "Cam kết vàng của mẹ Mỡ",
+        "commit-1":
+          "Sao kê mỗi ngày: báo cáo lúc 6h sáng, không sót cữ nào (kể cả cuối tuần & ngày lễ).",
+        "commit-2":
+          "Không giấu giếm: miếng bánh ăn dở của Mỡ cũng ghi lại, không để thất thoát “tài sản” của cháu.",
+        "commit-3":
+          "Hóa đơn đầy đủ: ảnh bill sữa, phiếu siêu thị, mã vạch – mẹ lưu trọn bộ để ai cần là có.",
+        "commit-4":
+          "Video unboxing: mở từng gói bỉm mới tinh, quay lại cho mọi người giám sát độ “êm”.",
+        "commit-5":
+          "Hotline 24/7: muốn hỏi hôm nay Mỡ ăn ngủ thế nào, cứ inbox mẹ bất kỳ lúc nào.",
+        "commit-6":
+          "Không block: hỏi kỹ mấy cũng trả lời, không có chuyện “đã xem” rồi im lặng.",
+        "compare-title": "So sánh với “người khác”",
+        "other-title": "Người khác",
+        "other-1": "Sao kê sau 3 năm (hoặc… không bao giờ).",
+        "other-2": "Số liệu mập mờ như ảnh chụp bằng camera 0.3 MP.",
+        "other-3": "“Quên” bill, “lỡ” mất hóa đơn.",
+        "other-4": "Hỏi nhiều là block ngay.",
+        "me-title": "Mẹ Mỡ",
+        "me-1": "Sao kê trước khi mua: ai tài trợ là được duyệt list trước.",
+        "me-2": "File chi tiêu rõ ràng, không làm tròn quá đà.",
+        "me-3": "Ghi chép chính xác đến từng ml sữa và từng cái bỉm của Mỡ.",
+        "me-4": "Trả lời tin nhắn còn nhanh hơn lúc Mỡ đòi bế.",
+        "donate-title": "= DONATE NGAY, NẾU BẠN THẤY MỠ DỄ THƯƠNG! =",
+        "donate-text":
+          "Không cần nhiều đâu, chỉ cần bạn thương Mỡ là mẹ cháu vui rồi.",
+        "footer-text": "Made with 💗 – Dự án Nuôi Mỡ, mẹ cháu sao kê thật.",
+        "overlay-title": "Cảm ơn bạn đã thương Mỡ! ✨",
+        "overlay-message":
+          "Chân thành cảm ơn bạn, donate một nụ cười là được rồi. Chúc bạn và gia đình luôn mạnh khỏe, hạnh phúc và thành công!",
+        "overlay-qr-title": "Quét mã QR để ủng hộ Mỡ 💗",
+        "btn-donate": "Donate",
+        "overlay-close": "Đóng / Close",
+      },
+      en: {
+        "title-main": "RAISING MO",
+        "subtitle":
+          "Mo’s mom promises to report every single drop of milk! 💯",
+        "why-title": "Why support the Raising Mo project?",
+        "realtime-title": "Realtime baby log",
+        "realtime-text":
+          "Every feeding and every diaper change is logged instantly – faster than Baby Mo can cry for milk.",
+        "transparent-title": "300% transparency",
+        "transparent-text":
+          "Not just 100%. From a 12k pack of wipes to a 9k yogurt drink, all Mo’s expenses are recorded with pictures.",
+        "app-track-title": "App tracking",
+        "app-track-text":
+          "24/7 tracking: when Mo sleeps, how many ml he drinks, how many diapers per day. Like a pink “Big Mother” assistant.",
+        "commit-title": "Golden commitments from Mo’s mom",
+        "commit-1":
+          "Daily report at 6 a.m., no feeding missed – even on weekends and holidays.",
+        "commit-2":
+          "No hiding: even half-eaten biscuits are logged so none of Mo’s “assets” go uncounted.",
+        "commit-3":
+          "Full proof: milk receipts, supermarket bills, barcodes – everything is stored and ready to show.",
+        "commit-4":
+          "Unboxing videos: every new diaper pack can be opened on camera for quality inspection.",
+        "commit-5":
+          "24/7 hotline: ask how Mo ate and slept today any time you like.",
+        "commit-6":
+          "No blocking: even tough questions get answers – no ghosting, no silent “seen”.",
+        "compare-title": "Compared with “other people”",
+        "other-title": "Others",
+        "other-1": "Statements after 3 years (or never).",
+        "other-2":
+          "Numbers as blurry as an old 0.3 MP camera photo.",
+        "other-3":
+          "Bills are “forgotten” or “lost” all the time.",
+        "other-4": "Ask too much and you get blocked.",
+        "me-title": "Mo’s mom",
+        "me-1":
+          "Reports before buying: sponsors can see the list in advance.",
+        "me-2":
+          "Clear expense spreadsheets, no suspicious rounding.",
+        "me-3":
+          "Records accurate to each ml of milk and every diaper used.",
+        "me-4":
+          "Replies to messages faster than Mo can demand to be picked up.",
+        "donate-title": "= DONATE IF BABY MO MADE YOU SMILE! =",
+        "donate-text":
+          "You don’t have to give much – just caring about Mo already makes his mom happy.",
+        "footer-text": "Made with 💗 – Raising Mo, with honest reports.",
+        "overlay-title": "Thank you for loving Mo! ✨",
+        "overlay-message":
+          "Thank you so much – a single smile from you is already a wonderful donation. Wishing you and your family health, happiness and success!",
+        "overlay-qr-title": "Scan this QR to support Mo 💗",
+        "btn-donate": "Donate",
+        "overlay-close": "Close",
+      },
+    };
+
+    let currentLang = "vi";
+
+    function applyTranslations(lang) {
+      currentLang = lang;
+      const map = translations[lang];
+      for (const key in map) {
+        const el = document.getElementById(key);
+        if (el) el.textContent = map[key];
+      }
+      document.documentElement.lang = lang;
+      document.querySelectorAll(".lang-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+      });
+    }
+
+    document.querySelectorAll(".lang-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const lang = btn.dataset.lang;
+        if (lang !== currentLang) {
+          applyTranslations(lang);
+        }
+      });
+    });
+
+    const overlay = document.getElementById("overlay");
+    const btnDonate = document.getElementById("btn-donate");
+    const btnClose = document.getElementById("overlay-close");
+
+    btnDonate.addEventListener("click", () => {
+      applyTranslations(currentLang);
+      overlay.classList.add("active");
+    });
+
+    btnClose.addEventListener("click", () => {
+      overlay.classList.remove("active");
+    });
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay || e.target.classList.contains("overlay-bg")) {
+        overlay.classList.remove("active");
+      }
+    });
+
+    applyTranslations("vi");
+  </script>
+</body>
+</html>
